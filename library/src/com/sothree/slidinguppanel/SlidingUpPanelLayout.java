@@ -9,6 +9,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -1337,12 +1338,17 @@ public class SlidingUpPanelLayout extends ViewGroup {
         } else {
             ss.mSlideState = mLastNotDraggingSlideState;
         }
-        return ss;
+
+        Bundle ssWrapper = new Bundle();
+        ssWrapper.putParcelable("saved_state", ss);
+
+        return ssWrapper;
     }
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
-        SavedState ss = (SavedState) state;
+        Bundle ssWrapper = (Bundle) state;
+        SavedState ss = ssWrapper.getParcelable("saved_state");
         super.onRestoreInstanceState(ss.getSuperState());
         mSlideState = ss.mSlideState != null ? ss.mSlideState : DEFAULT_SLIDE_STATE;
     }
@@ -1482,7 +1488,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
     }
 
-    static class SavedState extends BaseSavedState {
+    public static class SavedState extends BaseSavedState {
         PanelState mSlideState;
 
         SavedState(Parcelable superState) {
